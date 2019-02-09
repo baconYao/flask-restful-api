@@ -18,6 +18,7 @@ class User:
         if row:
             user = cls(*row)
             # user = cls(row[0], row[1], row[2])
+            # user = User(row[0], row[1], row[2])
         else:
             user = None
 
@@ -35,6 +36,7 @@ class User:
         if row:
             user = cls(*row)
             # user = cls(row[0], row[1], row[2])
+            # user = User(row[0], row[1], row[2])
         else:
             user = None
 
