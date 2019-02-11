@@ -7,8 +7,8 @@ from flask_restful import Api
 from flask_jwt import JWT
 # Ours
 from security import authenticate, identity
-from user import UserRegister
-from item import Item, ItemList
+from resources.user import UserRegister
+from resources.item import Item, ItemList
 
 # 檢查是否有data.db檔案
 db_file = Path("data.db")
