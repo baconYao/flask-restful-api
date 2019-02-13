@@ -8,7 +8,7 @@ class ItemModel(db.Model):
     price = db.Column(db.Float(precision=2))
 
     # 建立一個指向stores table的foreign key
-    store_id = db.column(db.Integer, db.ForeignKey('stores.id'))
+    store_id = db.Column(db.Integer, db.ForeignKey('stores.id'))
     store = db.relationship('StoreModel')
 
     def __init__(self, name, price, store_id):
