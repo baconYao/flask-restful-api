@@ -1,5 +1,3 @@
-import sqlite3
-
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required
 
@@ -24,7 +22,7 @@ class Item(Resource):
 
         if item:
             return item.json()
-        return {"message": "Item not found"}, 400
+        return {"message": "Item not found"}, 404
 
     def post(self, name):
         if ItemModel.find_by_name(name):

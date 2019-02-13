@@ -9,6 +9,7 @@ from flask_jwt import JWT
 from security import authenticate, identity
 from resources.user import UserRegister
 from resources.item import Item, ItemList
+from resources.store import Store, StoreList
 
 # 檢查是否有data.db檔案
 # db_file = Path("data.db")
@@ -31,8 +32,10 @@ def create_tables():
 
 jtw = JWT(app, authenticate, identity)      # POST /auth
 
+api.add_resource(Store, '/store/<string:name>')
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(ItemList, '/items')
+api.add_resource(StoreList, '/stores')
 api.add_resource(UserRegister, '/register')
 
 if __name__ == "__main__":
