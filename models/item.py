@@ -24,6 +24,7 @@ class ItemModel(db.Model):
         # return ItemModel.query.filter_by(name=name).first()     # SELECT * FROM items WHERE name=name LIMIT 1
         return cls.query.filter_by(name=name).first()     # SELECT * FROM items WHERE name=name LIMIT 1
 
+    @classmethod
     def find_all(cls):
         return cls.query.all()
 
