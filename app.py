@@ -6,27 +6,21 @@ from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 # Ours
-from resources.user import UserRegister, User, UserLogin, TokenRefresh
+from resources.user import UserRegister, User, UserLogin, UserLogout, TokenRefresh
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
 from db import db
-
-# 檢查是否有data.db檔案
-# db_file = Path("data.db")
-# if not db_file.exists():
-#     system("python create_table.py")
-# else:
-#     system("rm data.db")
-#     system("python create_table.py")
+from blacklist import BLACKLIST
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///data.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
+app.config['JWT_BLACKLIST_ENABLED'] = True
+app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 app.secret_key = 'asasdasf'         # app.config['JWT_SECRET_KEY']
 api = Api(app)
 
-# 自動建立data.db (定義在23行)
 @app.before_first_request           # 在第一個request進來之前
 def create_tables():
     db.create_all()
@@ -38,6 +32,10 @@ def add_claims_to_jwt(identity):
     if identity == 1:
         return {'is_admin': True}
     return {'is_admin': False}
+
+@jwt.token_in_blacklist_loader
+def check_if_token_in_balcklist(decrypted_token):
+    return decrypted_token['jti'] in BLACKLIST
 
 # The following callbacks are used for customizing jwt response/error messages.
 # The original ones may not be in a very pretty format (opinionated)
@@ -87,6 +85,7 @@ api.add_resource(StoreList, '/stores')
 api.add_resource(UserRegister, '/register')
 api.add_resource(User, '/user/<int:user_id>')
 api.add_resource(UserLogin, '/login')
+api.add_resource(UserLogout, '/logout')
 api.add_resource(TokenRefresh, '/refresh')
 
 if __name__ == "__main__":

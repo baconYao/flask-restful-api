@@ -3,9 +3,12 @@ from werkzeug.security import safe_str_cmp
 from flask_jwt_extended import (
     create_access_token, 
     create_refresh_token, 
-    jwt_refresh_token_required
+    jwt_refresh_token_required,
+    jwt_required,
+    get_raw_jwt
 )
 from models.user import UserModel
+from blacklist import BLACKLIST
 
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument('username',
@@ -34,6 +37,7 @@ class UserRegister(Resource):
 
         return {"message": "User created successfully"}, 201
 
+
 class User(Resource):
     @classmethod
     def get(cls, user_id):
@@ -49,6 +53,7 @@ class User(Resource):
             return {'message': 'User not found'}, 404
         user.delete_from_db()
         return {'message': 'User deleted.'}, 200
+
 
 class UserLogin(Resource):
 
@@ -69,6 +74,15 @@ class UserLogin(Resource):
                 'refresh_token': refresh_token
             }, 200
         return {'message': 'Invalid credentials'}, 401
+
+
+class UserLogout(Resource):
+    @jwt_required
+    def post(self):
+        jti = get_raw_jwt()['jti']   # jti is "JWT ID", a unique identifier for a JWT.
+        BLACKLIST.add(jti)
+        return {'message': 'Successfully logged out.'}
+
 
 class TokenRefresh(Resource):
     @jwt_refresh_token_required
